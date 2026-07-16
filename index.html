@@ -1150,50 +1150,50 @@
       position: relative;
       display: flex;
       align-items: end;
-      gap: 3px;
+      gap: 4px;
       height: 60px;
-      padding: 0 12px 2px;
-      filter: drop-shadow(0 10px 18px rgba(180, 125, 54, 0.24));
+      padding: 0 13px 2px;
+      filter: drop-shadow(0 8px 14px rgba(180, 125, 54, 0.18));
     }
 
     .brand-mark span {
       display: block;
-      width: 9px;
-      border-radius: 3px 3px 0 0;
+      width: 8px;
+      border-radius: 4px 4px 1px 1px;
       background:
-        linear-gradient(90deg, rgba(255,255,255,0.36), transparent 34%, rgba(70, 37, 10, 0.26) 88%),
-        linear-gradient(180deg, #ffe7a5 0%, #d7a75b 42%, #7e5126 100%);
+        linear-gradient(90deg, rgba(255,255,255,0.48), transparent 30%, rgba(70, 37, 10, 0.18) 88%),
+        linear-gradient(180deg, #fff1bd 0%, #d7a75b 48%, #8a5b2b 100%);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.48),
-        inset -1px 0 0 rgba(70, 39, 15, 0.32),
-        0 0 18px rgba(205, 156, 85, 0.28);
+        inset 0 1px 0 rgba(255,255,255,0.55),
+        inset -1px 0 0 rgba(70, 39, 15, 0.22),
+        0 0 10px rgba(205, 156, 85, 0.18);
     }
 
     .brand-mark::before {
       content: "";
       position: absolute;
-      left: 2px;
-      right: 2px;
-      bottom: -4px;
-      height: 34px;
-      border-top: 2px solid rgba(218, 171, 92, 0.92);
+      left: 1px;
+      right: 1px;
+      bottom: -3px;
+      height: 32px;
+      border-top: 1px solid rgba(230, 184, 101, 0.84);
       border-radius: 50% 50% 0 0;
       transform: perspective(90px) rotateX(58deg);
       transform-origin: bottom;
-      background: linear-gradient(180deg, rgba(226, 176, 91, 0.1), transparent 70%);
+      background: linear-gradient(180deg, rgba(226, 176, 91, 0.06), transparent 70%);
       pointer-events: none;
     }
 
     .brand-mark::after {
       content: "";
       position: absolute;
-      left: 20px;
-      top: 2px;
-      width: 18px;
-      height: 48px;
-      background: linear-gradient(90deg, transparent, rgba(255, 244, 191, 0.55), transparent);
+      left: 21px;
+      top: 4px;
+      width: 10px;
+      height: 46px;
+      background: linear-gradient(90deg, transparent, rgba(255, 248, 214, 0.42), transparent);
       transform: skewX(-16deg);
-      opacity: 0.42;
+      opacity: 0.34;
       pointer-events: none;
     }
 
@@ -1216,7 +1216,7 @@
       top: 50%;
       width: 55px;
       height: 1px;
-      background: linear-gradient(90deg, transparent, #d6a968);
+      background: linear-gradient(90deg, transparent, rgba(235, 189, 105, 0.88), transparent);
     }
 
     .brand-title::before {
@@ -1273,7 +1273,7 @@
     .explore-btn {
       display: inline-flex;
       align-items: center;
-      gap: 14px;
+      gap: 13px;
       margin-top: 30px;
       padding: 20px 34px;
       min-width: 274px;
@@ -1283,19 +1283,20 @@
     }
 
     .explore-btn span {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       display: inline-grid;
       place-items: center;
       border-radius: 50%;
-      color: #fff8ed;
+      color: #fff6e6;
       background:
-        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.55), transparent 26%),
-        linear-gradient(135deg, rgba(228, 176, 104, 0.46), rgba(91, 54, 35, 0.2));
+        radial-gradient(circle at 32% 24%, rgba(255,255,255,0.46), transparent 25%),
+        linear-gradient(135deg, rgba(219, 164, 85, 0.32), rgba(69, 43, 33, 0.12));
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.28),
-        0 8px 18px rgba(0,0,0,0.24);
-      font-size: 17px;
+        inset 0 0 0 1px rgba(255, 230, 181, 0.2),
+        inset 0 1px 0 rgba(255,255,255,0.2),
+        0 5px 12px rgba(0,0,0,0.16);
+      font-size: 15px;
       line-height: 1;
     }
 
@@ -1368,35 +1369,36 @@
       place-items: center;
       color: #fff;
       background:
-        radial-gradient(circle at 30% 22%, rgba(255, 224, 172, 0.42), transparent 32%),
-        linear-gradient(145deg, #9a6539, #623a20);
+        radial-gradient(circle at 32% 23%, rgba(255, 230, 183, 0.28), transparent 34%),
+        linear-gradient(145deg, #8d5b33, #5a331c);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.22),
-        inset 0 -10px 18px rgba(37, 18, 5, 0.24),
-        0 12px 24px rgba(0,0,0,0.28);
+        inset 0 0 0 1px rgba(255, 226, 174, 0.12),
+        inset 0 1px 0 rgba(255,255,255,0.16),
+        inset 0 -8px 16px rgba(37, 18, 5, 0.18),
+        0 10px 18px rgba(0,0,0,0.2);
       font-size: 0;
     }
 
     .search-button::before {
       content: "";
-      width: 18px;
-      height: 18px;
-      border: 3px solid rgba(255, 249, 235, 0.96);
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(255, 248, 231, 0.96);
       border-radius: 50%;
       box-shadow:
-        inset 2px 2px 4px rgba(255,255,255,0.24),
-        0 0 12px rgba(255, 226, 171, 0.26);
+        inset 1px 1px 3px rgba(255,255,255,0.18),
+        0 0 9px rgba(255, 226, 171, 0.16);
     }
 
     .search-button::after {
       content: "";
       position: absolute;
-      width: 13px;
-      height: 3px;
+      width: 12px;
+      height: 2px;
       border-radius: 99px;
-      background: rgba(255, 249, 235, 0.96);
-      transform: translate(12px, 12px) rotate(45deg);
-      box-shadow: 0 0 10px rgba(255, 226, 171, 0.26);
+      background: rgba(255, 248, 231, 0.96);
+      transform: translate(11px, 11px) rotate(45deg);
+      box-shadow: 0 0 8px rgba(255, 226, 171, 0.16);
     }
 
     .copy {
