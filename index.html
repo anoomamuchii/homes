@@ -1,1 +1,2398 @@
-<!doctype html><meta charset=utf-8><meta name=viewport content=width=device-width,initial-scale=1><title>Modern Villa 3D</title><style>html{font-family:Inter,system-ui,sans-serif;background:#f4f1eb;color:#171510;scroll-behavior:smooth}body{margin:0;min-height:540vh;background:radial-gradient(circle at 70% 18%,#fff,transparent 28rem),linear-gradient(135deg,#f8f4ec,#ddd8cc 55%,#c8d0c8);overflow-x:hidden}.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}.stage:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#ffffff55 1px,transparent 1px),linear-gradient(0deg,#ffffff44 1px,transparent 1px);background-size:76px 76px;mask-image:radial-gradient(circle,#000,transparent 68%)}canvas{position:absolute;width:min(92vw,980px);height:min(72vh,720px);filter:drop-shadow(0 44px 54px #2e231647)}main{position:relative;z-index:2;pointer-events:none}.beat{height:108vh;display:grid;align-content:center;padding-left:clamp(26px,5vw,72px);max-width:42rem;opacity:.14;transition:.25s}.beat.on{opacity:1}.beat:nth-child(even){margin-left:auto;padding-right:8vw}.ey{font-size:13px;font-weight:900;letter-spacing:.18em;color:#bd7840;text-transform:uppercase}h1{font-size:clamp(72px,10vw,142px);line-height:.94;margin:.2em 0;letter-spacing:0}h2{font-size:clamp(36px,6vw,76px);line-height:1;margin:0 0 14px}p{font-size:20px;line-height:1.55;color:#6f675d}.rail{position:fixed;right:38px;top:50%;translate:0 -50%;z-index:5;display:grid;gap:14px}.dot{width:12px;height:42px;border:0;border-radius:99px;background:#403a3f40}.dot.on{background:#171510}.mini{position:fixed;right:6vw;bottom:5vh;width:clamp(110px,11vw,166px);aspect-ratio:9/16;border-radius:14px;border:5px solid #ffffffaa;box-shadow:0 22px 52px #261f184d;background:linear-gradient(180deg,#d3e7e6 0 28%,transparent 28%),linear-gradient(180deg,transparent 0 30%,#fff4e7 30% 60%,transparent 60%),linear-gradient(90deg,transparent 0 15%,#19201e66 15% 33%,transparent 33% 39%,#c5854eb3 39% 64%,transparent 64% 70%,#19201e55 70% 88%,transparent 88%),linear-gradient(180deg,transparent 0 52%,#f8f2e8 52% 58%,transparent 58%),linear-gradient(180deg,transparent 0 67%,#34808fb8 67% 74%,transparent 74%),linear-gradient(145deg,#efe6da,#b8aa98)}@media(max-width:760px){canvas{width:122vw;height:58vh;top:38vh}.beat{max-width:none;padding:70px 26px 0}h1{font-size:58px}.rail,.mini{display:none}}</style><div class=stage><canvas id=c></canvas></div><div class=mini></div><nav class=rail><button class="dot on"></button><button class=dot></button><button class=dot></button><button class=dot></button><button class=dot></button></nav><main><section class="beat on"><div class=ey>Actual house model</div><h1>Modern<br>Villa 3D</h1><p>Scroll-controlled modern villa with a front door view first, then a full 360 orbit with roof slabs, side walls, rear walls, glass, pool, and driveway.</p></section><section class=beat><h2>Front first</h2><p>The first frame faces the front entry where the door is.</p></section><section class=beat><h2>Side depth</h2><p>Thick roof bands and side wall returns stop the model from looking flat.</p></section><section class=beat><h2>Back wall</h2><p>The back has its own wall mass, windows, terraces, and roof volume.</p></section><section class=beat><h2>Full 360</h2><p>The orbit completes smoothly and returns to the front.</p></section></main><script>const cv=c,ctx=cv.getContext('2d'),dots=[...document.querySelectorAll('.dot')],beats=[...document.querySelectorAll('.beat')];let tar=0,cur=0;function R(){let r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}function M(a,b,t){return a+(b-a)*t}function E(t){return t<.5?4*t*t*t:1-(-2*t+2)**3/2}function cam(p){let m=innerWidth<760,F=[[0,0,1.16,m?.72:.88,m?.5:.64,.62],[.2,0,1.1,m?.8:1.02,m?.5:.64,.61],[.35,-30,.86,m?.78:.96,m?.5:.66,.58],[.5,-105,1.02,m?.72:.84,m?.5:.7,.63],[.66,-190,1.03,m?.69:.8,m?.5:.69,.64],[.84,-285,1,m?.68:.8,m?.5:.68,.63],[1,-360,1.12,m?.7:.88,m?.5:.64,.6]],a=F[0],b=F.at(-1);for(let i=0;i<F.length-1;i++)if(p>=F[i][0]&&p<=F[i+1][0]){a=F[i];b=F[i+1]}let t=E((p-a[0])/(b[0]-a[0]||1));return{y:M(a[1],b[1],t)*Math.PI/180,pi:M(a[2],b[2],t),z:M(a[3],b[3],t),cx:M(a[4],b[4],t),cy:M(a[5],b[5],t)}}function P(p,T){R();let r=cv.getBoundingClientRect(),C=cam(p),s=Math.min(r.width/760,r.height/520)*520*C.z,cx=r.width*C.cx,cy=r.height*C.cy,y=C.y+Math.sin(T*.0014)*.25,pi=C.pi+Math.sin(T*.0012)*.01;return q=>{let[x,Y,z]=q,rx=x*Math.cos(y)-Y*Math.sin(y),ry=x*Math.sin(y)+Y*Math.cos(y),sy=ry*Math.cos(pi)-z*Math.sin(pi);return{x:cx+rx*s,y:cy+sy*s}}}function poly(a,f){ctx.beginPath();a.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fillStyle=f;ctx.fill();ctx.strokeStyle='#2d261c22';ctx.stroke()}function box(pr,x,y,z,w,d,h,c){let p=[[x,y,z],[x+w,y,z],[x+w,y+d,z],[x,y+d,z],[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]].map(pr);poly([p[3],p[2],p[6],p[7]],c[2]);poly([p[1],p[2],p[6],p[5]],c[1]);poly([p[0],p[1],p[5],p[4]],c[0]);poly([p[4],p[5],p[6],p[7]],c[3])}function panel(pr,x,y,z,w,h,col,n=4){let a=pr([x,y,z]),b=pr([x+w,y,z]),c=pr([x+w,y,z+h]),d=pr([x,y,z+h]);poly([a,b,c,d],col);for(let i=1;i<n;i++){let p=pr([x+w*i/n,y,z]),q=pr([x+w*i/n,y,z+h]);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='#19151088';ctx.lineWidth=2;ctx.stroke()}ctx.beginPath();let g=pr([x+w*.25,y,z+h*.8]),k=pr([x+w*.75,y,z+h*.62]);ctx.moveTo(g.x,g.y);ctx.lineTo(k.x,k.y);ctx.strokeStyle='#ffffffaa';ctx.stroke()}function ell(pr,x,y,z,rx,ry,f){let p=pr([x,y,z]);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-.16);ctx.scale(rx,ry);ctx.beginPath();ctx.arc(0,0,1,0,7);ctx.fillStyle=f;ctx.fill();ctx.restore()}function draw(p,T){let r=cv.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);let pr=P(p,T),w=['#f7f1e8','#cfc3b4','#d8cec1','#fffaf2'],roof=['#fff9f0','#c9bdaf','#d2c7bb','#fffdf7'];box(pr,-.56,-.38,-.035,1.18,.84,.04,['#dcd3c2','#a99b88','#cfc4b1','#e7decd']);box(pr,-.55,.15,0,.36,.16,.018,['#65a8b6','#2f6670','#4f8f9c','#7bbcca']);box(pr,.02,.23,0,.58,.22,.016,['#d9d2c7','#918777','#bdb5a7','#eee7db']);[[-.56,-.18],[-.46,.38],[-.2,.42],[.56,-.2],[.55,.28]].forEach(v=>ell(pr,v[0],v[1],.03,24,11,'#36502b'));box(pr,-.52,.13,.02,1.02,.11,.24,w);box(pr,-.38,.12,.3,.82,.12,.2,w);box(pr,-.56,-.09,.02,.1,.37,.26,w);box(pr,.42,-.09,.02,.1,.37,.26,w);box(pr,-.64,-.18,.225,1.22,.47,.07,roof);box(pr,-.54,-.2,.548,1.14,.5,.075,roof);box(pr,-.48,-.22,.61,.98,.44,.045,roof);box(pr,-.48,-.06,.02,.96,.24,.2,w);box(pr,-.56,-.09,.22,1.08,.32,.07,roof);box(pr,-.34,-.1,.29,.74,.28,.18,w);box(pr,-.46,-.14,.49,.98,.36,.08,roof);panel(pr,-.48,-.155,.085,.92,.14,'#535c5975',6);panel(pr,-.44,-.162,.325,.82,.13,'#535c5975',5);panel(pr,-.08,-.17,.085,.3,.14,'#d6914c66',2);panel(pr,-.45,.246,.07,.28,.13,'#5b7e8670',3);panel(pr,.03,.246,.075,.34,.13,'#60879175',3);box(pr,.205,-.025,.022,.22,.11,.022,['#ddd2c2','#978b7d','#c9bcaa','#eee4d5']);box(pr,.285,-.058,.042,.09,.034,.15,['#473a31','#211b17','#2f2822','#5b4a3e']);box(pr,.38,-.06,.048,.035,.03,.14,['#e5ad71','#8b5c38','#c58a54','#f0c08a']);for(let [x,y]of [[-.42,.27],[-.25,.3],[.02,.32],[.28,.29],[.5,.22]]){let q=pr([x,y,.025]),gr=ctx.createRadialGradient(q.x,q.y,1,q.x,q.y,10);gr.addColorStop(0,'#fff1b1');gr.addColorStop(.45,'#dd8936aa');gr.addColorStop(1,'#dd893600');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(q.x,q.y,10,0,7);ctx.fill()}}function meas(){let h=document.body.scrollHeight-innerHeight;tar=h?Math.max(0,Math.min(1,scrollY/h)):0}function tick(t){cur+=(tar-cur)*.085;document.documentElement.style.setProperty('--p',cur);let a=Math.min(4,Math.round(cur*4));dots.forEach((d,i)=>d.classList.toggle('on',i==a));beats.forEach((b,i)=>b.classList.toggle('on',i==a));draw(cur,t);requestAnimationFrame(tick)}dots.forEach((d,i)=>d.onclick=()=>scrollTo({top:(document.body.scrollHeight-innerHeight)*i/4,behavior:'smooth'}));addEventListener('scroll',meas,{passive:true});addEventListener('resize',meas);meas();requestAnimationFrame(tick)</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viral 3D House Scroll Model</title>
+  <style>
+    :root {
+      --bg: #b8b8b6;
+      --ink: #f8f4ee;
+      --muted: rgba(248, 244, 238, 0.72);
+      --glass: rgba(138, 185, 199, 0.36);
+      --door: #505b5c;
+      --sunset: #d88a58;
+      --cream: #e7dfd2;
+      --stone: #9b9283;
+      --wood: #8d6946;
+      --roof: #2b2925;
+      --shadow: rgba(25, 19, 11, 0.24);
+      --accent: #b98552;
+      --panel: #030303;
+      --panel-soft: #0b0908;
+      --line: rgba(255,255,255,0.12);
+      --camera-x: -18deg;
+      --camera-y: -36deg;
+      --camera-z: 0deg;
+      --camera-scale: 0.76;
+      --camera-pan-x: 0px;
+      --camera-pan-y: 0px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: #b8b8b6;
+      overflow-x: hidden;
+    }
+
+    .stage {
+      position: fixed;
+      inset: clamp(22px, 7vh, 88px) clamp(22px, 5.4vw, 80px);
+      display: block;
+      perspective: 1800px;
+      overflow: hidden;
+      isolation: isolate;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 78% 52%, rgba(138, 91, 55, 0.22), transparent 28rem),
+        linear-gradient(180deg, #050505 0%, #000 100%);
+      box-shadow: 0 34px 80px rgba(0, 0, 0, 0.28);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 80% 60%, rgba(255, 175, 96, 0.12), transparent 22rem),
+        radial-gradient(circle at 68% 44%, rgba(255,255,255,0.08), transparent 18rem);
+      opacity: 1;
+      z-index: -2;
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      width: min(70vw, 760px);
+      aspect-ratio: 1;
+      left: 72%;
+      top: 58%;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(175, 116, 74, 0.22), rgba(74, 45, 28, 0.16) 54%, transparent 72%);
+      filter: blur(18px);
+      z-index: -1;
+    }
+
+    .camera {
+      width: min(92vw, 980px);
+      height: min(72vh, 720px);
+      position: relative;
+      transform-style: preserve-3d;
+      transform:
+        translate3d(var(--camera-pan-x), var(--camera-pan-y), 0)
+        rotateX(var(--camera-x))
+        rotateY(var(--camera-y))
+        rotateZ(var(--camera-z))
+        scale(var(--camera-scale));
+      transition: transform 120ms linear;
+      filter: drop-shadow(0 40px 48px rgba(45, 35, 22, 0.24));
+    }
+
+    .villa-canvas {
+      position: absolute;
+      right: clamp(4px, 3.5vw, 64px);
+      top: 24%;
+      width: min(58vw, 780px);
+      height: min(62vh, 620px);
+      max-height: 760px;
+      z-index: 1;
+      filter: drop-shadow(0 44px 54px rgba(0, 0, 0, 0.68)) saturate(1.05) contrast(1.05);
+    }
+
+    .camera {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .world,
+    .house,
+    .piece {
+      position: absolute;
+      transform-style: preserve-3d;
+      left: 50%;
+      top: 50%;
+    }
+
+    .world {
+      width: 880px;
+      height: 620px;
+      translate: -50% -50%;
+      transform: rotateX(90deg);
+    }
+
+    .ground {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 620px;
+      height: 460px;
+      translate: -50% -50%;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 72% 20%, rgba(255, 213, 158, 0.36), transparent 10rem),
+        linear-gradient(135deg, #718868, #d8d0b9 44%, #8f927e 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.62),
+        inset 0 -30px 70px rgba(64, 39, 22, 0.18),
+        0 44px 86px rgba(46, 34, 22, 0.24);
+      transform: translateZ(-8px);
+    }
+
+    .driveway {
+      position: absolute;
+      width: 260px;
+      height: 520px;
+      left: 70px;
+      top: 116px;
+      border-radius: 18px 18px 34px 34px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.18), transparent 22%, rgba(0,0,0,0.08) 82%),
+        linear-gradient(180deg, #cfc6b5, #998d7a);
+      transform: translateZ(0px);
+    }
+
+    .pool {
+      position: absolute;
+      right: 62px;
+      bottom: 54px;
+      width: 250px;
+      height: 150px;
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.62), transparent 30%),
+        radial-gradient(circle at 64% 38%, rgba(255,255,255,0.46), transparent 22%),
+        #6ba8ba;
+      box-shadow:
+        inset 0 0 0 12px #dbd2c1,
+        inset 0 18px 34px rgba(255,255,255,0.36);
+      transform: translateZ(4px);
+    }
+
+    .tree {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 28%, #d9e1a3, #60764d 70%);
+      box-shadow: 0 14px 22px rgba(33, 44, 29, 0.22);
+      transform: translateZ(48px);
+    }
+
+    .tree::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 56px;
+      left: 24px;
+      top: 42px;
+      border-radius: 8px;
+      background: #7d5941;
+      transform: translateZ(-44px);
+    }
+
+    .tree.one { left: 610px; top: 60px; }
+    .tree.two { left: 92px; top: 74px; scale: 0.82; }
+    .tree.three { left: 720px; top: 254px; scale: 0.72; }
+
+    .house {
+      width: 520px;
+      height: 360px;
+      translate: -50% -50%;
+      transform: translate3d(18px, -4px, 42px);
+    }
+
+    .slab {
+      width: 500px;
+      height: 352px;
+      translate: -50% -50%;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.64), transparent 34%),
+        linear-gradient(135deg, #f0e4d4, #c9b292);
+      transform: translateZ(0px);
+      box-shadow: 0 30px 54px rgba(32, 26, 18, 0.2);
+    }
+
+    .box {
+      --w: 260px;
+      --h: 150px;
+      --d: 200px;
+      --x: 0px;
+      --y: 0px;
+      --z: 0px;
+      --mat: var(--cream);
+      --side: #c8bea9;
+      width: var(--w);
+      height: var(--d);
+      translate: -50% -50%;
+      transform: translate3d(var(--x), var(--y), var(--z));
+      transform-style: preserve-3d;
+    }
+
+    .face {
+      position: absolute;
+      backface-visibility: hidden;
+      border: 1px solid rgba(255,255,255,0.26);
+      background: var(--mat);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+    }
+
+    .front, .back {
+      width: var(--w);
+      height: var(--h);
+      left: 0;
+      top: 50%;
+      transform-origin: center;
+    }
+
+    .front { transform: translateY(-50%) rotateX(-90deg) translateZ(calc(var(--d) / 2)); }
+    .back { transform: translateY(-50%) rotateX(-90deg) rotateY(180deg) translateZ(calc(var(--d) / 2)); background: var(--side); }
+
+    .left, .right {
+      width: var(--d);
+      height: var(--h);
+      left: 50%;
+      top: 50%;
+      background: var(--side);
+    }
+
+    .left { transform: translate(-50%, -50%) rotateX(-90deg) rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
+    .right { transform: translate(-50%, -50%) rotateX(-90deg) rotateY(90deg) translateZ(calc(var(--w) / 2)); }
+
+    .top {
+      width: var(--w);
+      height: var(--d);
+      left: 0;
+      top: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.14), transparent 42%), var(--mat);
+      transform: translateZ(var(--h));
+      box-shadow: inset -24px -18px 40px rgba(62, 50, 36, 0.08);
+    }
+
+    .main-volume {
+      --w: 330px;
+      --h: 142px;
+      --d: 238px;
+      --x: 34px;
+      --y: -14px;
+      --z: 22px;
+      --mat: #e6ddce;
+      --side: #cfc4b0;
+    }
+
+    .garage {
+      --w: 180px;
+      --h: 98px;
+      --d: 178px;
+      --x: -196px;
+      --y: 44px;
+      --z: 20px;
+      --mat: #d3c7b5;
+      --side: #b9ae9c;
+    }
+
+    .upper {
+      --w: 238px;
+      --h: 92px;
+      --d: 172px;
+      --x: 62px;
+      --y: -42px;
+      --z: 164px;
+      --mat: #f0e8dc;
+      --side: #d8cebb;
+    }
+
+    .roof {
+      --w: 368px;
+      --h: 24px;
+      --d: 276px;
+      --x: 36px;
+      --y: -14px;
+      --z: 168px;
+      --mat: #2e2a26;
+      --side: #201e1b;
+    }
+
+    .roof .top {
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 7px, rgba(0,0,0,0.1) 7px 14px),
+        #2d2925;
+    }
+
+    .glass-wall {
+      width: 214px;
+      height: 98px;
+      translate: -50% -50%;
+      border-radius: 6px;
+      background:
+        linear-gradient(125deg, rgba(255,255,255,0.64), transparent 22%, rgba(255,255,255,0.2) 50%, transparent 56%),
+        linear-gradient(90deg, transparent 0 24%, rgba(20, 31, 37, 0.18) 24% 26%, transparent 26% 50%, rgba(20, 31, 37, 0.18) 50% 52%, transparent 52% 76%, rgba(20, 31, 37, 0.18) 76% 78%, transparent 78%),
+        var(--glass);
+      box-shadow:
+        inset 0 0 0 2px rgba(45, 57, 62, 0.24),
+        0 16px 22px rgba(36, 55, 61, 0.14);
+      transform: translate3d(91px, 111px, 112px) rotateX(-90deg) translateZ(122px);
+    }
+
+    .side-glass {
+      width: 154px;
+      height: 76px;
+      translate: -50% -50%;
+      border-radius: 5px;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.58), transparent 28%),
+        linear-gradient(90deg, transparent 0 49%, rgba(27, 39, 44, 0.2) 49% 52%, transparent 52%),
+        rgba(103, 154, 170, 0.34);
+      box-shadow: inset 0 0 0 2px rgba(45, 57, 62, 0.24);
+      transform: translate3d(230px, -43px, 104px) rotateX(-90deg) rotateY(90deg) translateZ(88px);
+    }
+
+    .garage-door {
+      width: 128px;
+      height: 66px;
+      translate: -50% -50%;
+      border-radius: 4px;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.16) 0 7px, rgba(0,0,0,0.08) 7px 9px),
+        #948b7d;
+      transform: translate3d(-196px, 134px, 66px) rotateX(-90deg) translateZ(90px);
+    }
+
+    .door {
+      width: 48px;
+      height: 86px;
+      translate: -50% -50%;
+      border-radius: 4px 4px 1px 1px;
+      background:
+        radial-gradient(circle at 78% 48%, #d7b788 0 3px, transparent 4px),
+        linear-gradient(90deg, #775638, #a47b52);
+      transform: translate3d(-18px, 111px, 82px) rotateX(-90deg) translateZ(122px);
+    }
+
+    .deck {
+      width: 360px;
+      height: 104px;
+      translate: -50% -50%;
+      border-radius: 12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.16) 0 3px, transparent 3px 22px),
+        linear-gradient(135deg, #a77a4e, #745033);
+      transform: translate3d(76px, 188px, 20px) translateZ(10px);
+      box-shadow: 0 20px 28px rgba(42, 31, 22, 0.2);
+    }
+
+    .pergola {
+      width: 246px;
+      height: 112px;
+      translate: -50% -50%;
+      transform: translate3d(115px, 172px, 136px);
+      transform-style: preserve-3d;
+    }
+
+    .beam {
+      position: absolute;
+      width: 246px;
+      height: 10px;
+      background: #87623e;
+      border-radius: 2px;
+      transform: translateZ(var(--z)) translateY(var(--y));
+      box-shadow: 0 5px 9px rgba(0,0,0,0.16);
+    }
+
+    .beam:nth-child(1) { --z: 0px; --y: -48px; }
+    .beam:nth-child(2) { --z: 0px; --y: 0px; }
+    .beam:nth-child(3) { --z: 0px; --y: 48px; }
+
+    .post {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #6e4e32;
+      border-radius: 2px;
+      transform: translate(var(--x), var(--y)) translateZ(-58px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.16);
+    }
+
+    .post::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 112px;
+      background: inherit;
+      transform-origin: top;
+      transform: rotateX(90deg);
+    }
+
+    .post.a { --x: -116px; --y: -54px; }
+    .post.b { --x: 104px; --y: -54px; }
+    .post.c { --x: -116px; --y: 42px; }
+    .post.d { --x: 104px; --y: 42px; }
+
+    .hotspot {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      translate: -50% -50%;
+      border: 2px solid rgba(255,255,255,0.92);
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 10px rgba(186,123,69,0.18), 0 10px 18px rgba(0,0,0,0.18);
+      transform: translate3d(var(--x), var(--y), var(--z));
+    }
+
+    .hotspot::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 22px;
+      top: 50%;
+      min-width: max-content;
+      translate: 0 -50%;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      background: rgba(24, 21, 17, 0.76);
+      backdrop-filter: blur(10px);
+      transform: rotateX(18deg) rotateY(36deg);
+    }
+
+    .hotspot,
+    .garage,
+    .garage-door,
+    .door,
+    .pergola,
+    .entry-set,
+    .glass-wall,
+    .side-glass,
+    .lower-glass,
+    .upper-glass {
+      display: none;
+    }
+
+    .driveway {
+      width: 320px;
+      height: 500px;
+      left: 42px;
+      top: 170px;
+      border-radius: 22px 22px 42px 42px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.26), transparent 28%, rgba(0,0,0,0.09) 88%),
+        repeating-linear-gradient(0deg, transparent 0 42px, rgba(255,255,255,0.16) 42px 44px),
+        linear-gradient(180deg, #ded8c9, #9f9a8d);
+    }
+
+    .pool {
+      right: 548px;
+      bottom: 64px;
+      width: 270px;
+      height: 112px;
+      border-radius: 16px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.62), transparent 30%),
+        linear-gradient(180deg, #4f97a4, #255f6d);
+      box-shadow:
+        inset 0 0 0 10px #d9d0be,
+        inset 0 18px 34px rgba(255,255,255,0.32),
+        0 18px 28px rgba(28, 55, 49, 0.18);
+    }
+
+    .main-volume {
+      --w: 492px;
+      --h: 112px;
+      --d: 214px;
+      --x: 34px;
+      --y: 24px;
+      --z: 58px;
+      --mat: #eee7db;
+      --side: #d8cfc1;
+    }
+
+    .upper {
+      --w: 340px;
+      --h: 88px;
+      --d: 186px;
+      --x: 76px;
+      --y: -68px;
+      --z: 188px;
+      --mat: #f4eee4;
+      --side: #d6cdc1;
+    }
+
+    .roof {
+      --w: 430px;
+      --h: 22px;
+      --d: 248px;
+      --x: 82px;
+      --y: -72px;
+      --z: 286px;
+      --mat: #f5efe5;
+      --side: #cfc5b7;
+    }
+
+    .roof .top {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.42), transparent 48%),
+        #f1eadf;
+    }
+
+    .glass-wall {
+      width: 410px;
+      height: 92px;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,0.52), transparent 18%, rgba(255, 177, 88, 0.36) 52%, transparent 68%),
+        repeating-linear-gradient(90deg, transparent 0 78px, rgba(32,27,22,0.5) 78px 83px),
+        rgba(92, 94, 88, 0.34);
+      transform: translate3d(36px, 140px, 126px) rotateX(-90deg) translateZ(116px);
+    }
+
+    .side-glass {
+      width: 300px;
+      height: 76px;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.5), transparent 28%, rgba(255, 147, 71, 0.36) 70%),
+        repeating-linear-gradient(90deg, transparent 0 68px, rgba(32,27,22,0.46) 68px 73px),
+        rgba(88, 92, 87, 0.32);
+      transform: translate3d(262px, -60px, 214px) rotateX(-90deg) rotateY(90deg) translateZ(88px);
+    }
+
+    .deck {
+      width: 440px;
+      height: 96px;
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.34), transparent 38%),
+        linear-gradient(180deg, #e3d6c3, #b8aa97);
+      transform: translate3d(68px, 202px, 18px) translateZ(10px);
+    }
+
+    .wing-left {
+      --w: 132px;
+      --h: 108px;
+      --d: 196px;
+      --x: -242px;
+      --y: 26px;
+      --z: 58px;
+      --mat: #f1eadf;
+      --side: #d4cabc;
+    }
+
+    .side-core {
+      --w: 96px;
+      --h: 112px;
+      --d: 204px;
+      --x: 280px;
+      --y: 32px;
+      --z: 58px;
+      --mat: #d4c4b3;
+      --side: #bba995;
+    }
+
+    .balcony-slab {
+      --w: 570px;
+      --h: 26px;
+      --d: 254px;
+      --x: 20px;
+      --y: 28px;
+      --z: 168px;
+      --mat: #f4eee5;
+      --side: #d5cabd;
+    }
+
+    .top-parapet {
+      --w: 470px;
+      --h: 46px;
+      --d: 260px;
+      --x: 82px;
+      --y: -72px;
+      --z: 286px;
+      --mat: #f7f1e8;
+      --side: #d6cabd;
+    }
+
+    .terrace-roof {
+      --w: 500px;
+      --h: 24px;
+      --d: 276px;
+      --x: 84px;
+      --y: -78px;
+      --z: 350px;
+      --mat: #f8f2e9;
+      --side: #d2c7bb;
+    }
+
+    .glass-box {
+      position: absolute;
+      width: var(--w);
+      height: var(--h);
+      translate: -50% -50%;
+      border-radius: 4px;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,0.68), transparent 20%, rgba(255,154,70,0.42) 55%, rgba(42,38,31,0.22) 74%),
+        repeating-linear-gradient(90deg, transparent 0 72px, rgba(24,22,19,0.54) 72px 78px),
+        rgba(85, 92, 88, 0.38);
+      box-shadow:
+        inset 0 0 0 2px rgba(34,31,27,0.32),
+        inset 0 -14px 22px rgba(30,28,25,0.12),
+        0 18px 30px rgba(34,27,19,0.18);
+      transform-style: preserve-3d;
+      transform: translate3d(var(--x), var(--y), var(--z)) rotateX(-90deg) translateZ(var(--front));
+    }
+
+    .glass-box::before,
+    .glass-box::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 18px;
+      height: 100%;
+      background: rgba(63, 58, 50, 0.32);
+      transform-origin: center;
+    }
+
+    .glass-box::before {
+      left: -18px;
+      transform: rotateY(-90deg);
+    }
+
+    .glass-box::after {
+      right: -18px;
+      transform: rotateY(90deg);
+    }
+
+    .glass-lower {
+      --w: 454px;
+      --h: 92px;
+      --x: 24px;
+      --y: 138px;
+      --z: 76px;
+      --front: 122px;
+    }
+
+    .glass-upper {
+      --w: 340px;
+      --h: 78px;
+      --x: 80px;
+      --y: 50px;
+      --z: 214px;
+      --front: 100px;
+    }
+
+    .glass-side {
+      --w: 190px;
+      --h: 88px;
+      --x: 284px;
+      --y: -8px;
+      --z: 104px;
+      --front: 88px;
+      transform: translate3d(var(--x), var(--y), var(--z)) rotateX(-90deg) rotateY(90deg) translateZ(var(--front));
+    }
+
+    .column {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      translate: -50% -50%;
+      border-radius: 3px;
+      background: linear-gradient(135deg, #f8f2e8, #c8baaa);
+      box-shadow: 0 10px 18px rgba(45,36,25,0.18);
+      transform: translate3d(var(--x), var(--y), 72px);
+    }
+
+    .column::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      height: 160px;
+      background: inherit;
+      transform-origin: top;
+      transform: rotateX(90deg);
+      box-shadow: inset -4px 0 8px rgba(74,62,48,0.16);
+    }
+
+    .balcony-rail {
+      width: 492px;
+      height: 44px;
+      translate: -50% -50%;
+      border-radius: 5px;
+      background:
+        repeating-linear-gradient(90deg, rgba(35,32,29,0.42) 0 4px, transparent 4px 62px),
+        linear-gradient(180deg, rgba(255,255,255,0.34), rgba(90,96,92,0.2));
+      border: 1px solid rgba(37,34,30,0.28);
+      box-shadow: 0 12px 20px rgba(32,27,20,0.14);
+      transform: translate3d(12px, 164px, 202px) rotateX(-90deg) translateZ(128px);
+    }
+
+    .slab-underside {
+      width: var(--w);
+      height: var(--d);
+      translate: -50% -50%;
+      border-radius: 6px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.12), transparent 38%),
+        linear-gradient(180deg, #c9beb1, #908376);
+      box-shadow: 0 22px 34px rgba(48, 39, 28, 0.22);
+      transform: translate3d(var(--x), var(--y), var(--z));
+    }
+
+    .upper-return {
+      width: 34px;
+      height: 240px;
+      translate: -50% -50%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #bfb4a8, #f4eee5 40%, #c8bcad);
+      box-shadow: inset -10px 0 18px rgba(56,45,34,0.16), 0 18px 26px rgba(42,34,24,0.14);
+      transform: translate3d(328px, -40px, 210px) rotateX(-90deg) rotateY(90deg);
+    }
+
+    .lower-return {
+      width: 38px;
+      height: 228px;
+      translate: -50% -50%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #b7aa9c, #efe6d9 46%, #c8b8a7);
+      box-shadow: inset -12px 0 18px rgba(56,45,34,0.18), 0 18px 26px rgba(42,34,24,0.14);
+      transform: translate3d(316px, 68px, 92px) rotateX(-90deg) rotateY(90deg);
+    }
+
+    .sofa,
+    .table,
+    .planter {
+      position: absolute;
+      translate: -50% -50%;
+      transform-style: preserve-3d;
+      border-radius: 5px;
+      box-shadow: 0 10px 18px rgba(38,28,19,0.18);
+    }
+
+    .sofa {
+      width: 68px;
+      height: 34px;
+      background: linear-gradient(135deg, #d5c4ad, #94775d);
+      transform: translate3d(var(--x), var(--y), 36px);
+    }
+
+    .table {
+      width: 36px;
+      height: 28px;
+      background: linear-gradient(135deg, #a36f45, #5f3f29);
+      transform: translate3d(var(--x), var(--y), 34px);
+    }
+
+    .planter {
+      width: 24px;
+      height: 24px;
+      background: #6d4d35;
+      transform: translate3d(var(--x), var(--y), 38px);
+    }
+
+    .planter::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 38px;
+      height: 38px;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #a2b66e, #405833 72%);
+      transform: translateZ(24px);
+    }
+
+    .lower-glass,
+    .upper-glass {
+      width: 430px;
+      height: 82px;
+      translate: -50% -50%;
+      border-radius: 6px;
+      background:
+        linear-gradient(110deg, rgba(255,255,255,0.6), transparent 18%, rgba(255, 158, 72, 0.5) 48%, rgba(88, 72, 56, 0.22) 72%),
+        repeating-linear-gradient(90deg, transparent 0 70px, rgba(26,22,18,0.56) 70px 76px),
+        rgba(104, 112, 108, 0.42);
+      box-shadow:
+        inset 0 0 0 2px rgba(31, 30, 27, 0.22),
+        0 14px 24px rgba(40, 32, 22, 0.16);
+    }
+
+    .lower-glass {
+      transform: translate3d(30px, 143px, 74px) rotateX(-90deg) translateZ(116px);
+    }
+
+    .upper-glass {
+      width: 330px;
+      height: 72px;
+      transform: translate3d(78px, 55px, 218px) rotateX(-90deg) translateZ(94px);
+    }
+
+    .wood-screen {
+      width: 92px;
+      height: 118px;
+      translate: -50% -50%;
+      border-radius: 3px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.14) 0 2px, transparent 2px 16px),
+        linear-gradient(135deg, #9a795f, #d1b095);
+      box-shadow: inset 0 0 0 1px rgba(72,48,30,0.22);
+      transform: translate3d(234px, 72px, 122px) rotateX(-90deg) translateZ(106px);
+    }
+
+    .warm-room {
+      width: 370px;
+      height: 170px;
+      translate: -50% -50%;
+      border-radius: 12px;
+      background: radial-gradient(ellipse, rgba(255, 149, 66, 0.42), rgba(255, 189, 119, 0.12) 55%, transparent 72%);
+      filter: blur(12px);
+      transform: translate3d(64px, 138px, 112px) rotateX(-90deg) translateZ(92px);
+      pointer-events: none;
+    }
+
+    .path-light {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff6cc 0 24%, #d69043 36%, transparent 68%);
+      filter: drop-shadow(0 0 10px rgba(226, 150, 68, 0.9));
+      transform: translate3d(var(--x), var(--y), 18px);
+    }
+
+    .entry-set {
+      width: 520px;
+      height: 360px;
+      translate: -50% -50%;
+      transform: translate3d(2px, 24px, 44px) scale(1.36);
+      transform-style: preserve-3d;
+    }
+
+    .portal-back {
+      width: 190px;
+      height: 262px;
+      translate: -50% -50%;
+      border-radius: 10px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.66), transparent 28%),
+        linear-gradient(180deg, #fff7eb, #dccfbd);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.72),
+        inset 18px 0 30px rgba(255,255,255,0.36),
+        0 18px 34px rgba(58,43,28,0.16);
+      transform: translate3d(86px, 86px, 148px) rotateX(-90deg);
+    }
+
+    .entry-door {
+      width: 194px;
+      height: 286px;
+      translate: -50% -50%;
+      border-radius: 4px;
+      background:
+        linear-gradient(90deg, transparent 0 8%, rgba(255,255,255,0.22) 8% 9%, transparent 9% 18%, rgba(255,255,255,0.18) 18% 19%, transparent 19% 29%, rgba(255,255,255,0.15) 29% 30%, transparent 30% 42%, rgba(255,255,255,0.13) 42% 43%, transparent 43% 56%, rgba(255,255,255,0.11) 56% 57%, transparent 57% 71%, rgba(255,255,255,0.09) 71% 72%, transparent 72%),
+        radial-gradient(circle at 58% 45%, #171717 0 4px, transparent 5px),
+        linear-gradient(105deg, rgba(255,255,255,0.16), transparent 36%),
+        var(--door);
+      box-shadow:
+        inset -24px 0 30px rgba(0,0,0,0.28),
+        inset 10px 0 24px rgba(255,255,255,0.12),
+        0 24px 34px rgba(30, 25, 20, 0.28);
+      transform: translate3d(-142px, 54px, 158px) rotateX(-90deg) rotateY(-20deg);
+    }
+
+    .entry-door::before {
+      content: "BAIA'S\A HOMES";
+      white-space: pre;
+      position: absolute;
+      left: 34px;
+      top: 72px;
+      color: #8fc0ec;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .entry-door::after {
+      content: "";
+      position: absolute;
+      right: 20px;
+      bottom: 62px;
+      width: 15px;
+      height: 76px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #111, #2a2422);
+      box-shadow:
+        -13px -62px 0 -5px #211f1e,
+        -26px -3px 0 -5px rgba(0,0,0,0.34);
+    }
+
+    .hall-wall {
+      width: 246px;
+      height: 292px;
+      translate: -50% -50%;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.5), transparent 22%),
+        linear-gradient(100deg, #f8efe2, #ddd2c1);
+      box-shadow:
+        inset 18px 0 34px rgba(255,255,255,0.5),
+        inset -10px 0 24px rgba(75, 65, 52, 0.12);
+    }
+
+    .hall-left {
+      transform: translate3d(-18px, -40px, 148px) rotateX(-90deg) rotateY(78deg);
+    }
+
+    .hall-right {
+      transform: translate3d(178px, 62px, 148px) rotateX(-90deg) rotateY(-68deg);
+    }
+
+    .hall-ceiling {
+      width: 300px;
+      height: 238px;
+      translate: -50% -50%;
+      background:
+        radial-gradient(circle at 38% 24%, rgba(255,255,255,0.9), transparent 14%),
+        radial-gradient(circle at 63% 58%, rgba(255,255,255,0.72), transparent 13%),
+        linear-gradient(140deg, #fffaf0, #dfd4c5);
+      transform: translate3d(82px, 38px, 296px);
+      box-shadow: inset 0 -22px 34px rgba(120,100,72,0.12);
+    }
+
+    .downlight {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0 24%, #fff2c7 34%, rgba(255,238,190,0.22) 64%, transparent 68%);
+      filter: drop-shadow(0 0 22px rgba(255, 239, 198, 0.92));
+      transform: translate3d(var(--x), var(--y), 304px);
+    }
+
+    .niche {
+      width: 98px;
+      height: 118px;
+      translate: -50% -50%;
+      border-radius: 4px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.16), transparent 18%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.12) 0 2px, transparent 2px 24px),
+        linear-gradient(135deg, #704a31, #ba8759);
+      box-shadow:
+        inset 0 0 0 9px #efe5d7,
+        inset 0 18px 24px rgba(0,0,0,0.2),
+        0 12px 18px rgba(42,31,20,0.18);
+      transform: translate3d(220px, 94px, 132px) rotateX(-90deg) rotateY(-70deg);
+    }
+
+    .host {
+      width: 44px;
+      height: 128px;
+      translate: -50% -50%;
+      transform: translate3d(52px, 78px, 88px) rotateX(-90deg);
+      transform-style: preserve-3d;
+    }
+
+    .host::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #d7aa8e;
+      box-shadow: 0 18px 0 8px #1d1613;
+    }
+
+    .host::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 44px;
+      height: 92px;
+      clip-path: polygon(48% 0, 75% 10%, 100% 100%, 0 100%, 24% 10%);
+      background: linear-gradient(90deg, #a90f21, #f02a3e 55%, #8e0b1b);
+      box-shadow: 0 12px 18px rgba(0,0,0,0.18);
+    }
+
+    .door-edge {
+      width: 20px;
+      height: 286px;
+      translate: -50% -50%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #252b2c, #697273);
+      box-shadow: inset -6px 0 12px rgba(0,0,0,0.32);
+      transform: translate3d(-32px, 78px, 156px) rotateX(-90deg) rotateY(70deg);
+    }
+
+    .jamb {
+      width: 18px;
+      height: 294px;
+      translate: -50% -50%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #fcf7ed, #cfc3b2);
+      box-shadow: 0 16px 24px rgba(48, 38, 25, 0.14);
+      transform: translate3d(-54px, 52px, 150px) rotateX(-90deg) rotateY(88deg);
+    }
+
+    .threshold {
+      width: 210px;
+      height: 22px;
+      translate: -50% -50%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #b99671, #f2d7b5 45%, #8a6241);
+      box-shadow: 0 9px 18px rgba(53,37,22,0.24);
+      transform: translate3d(-56px, 176px, 18px);
+    }
+
+    .floor-runner {
+      width: 210px;
+      height: 260px;
+      translate: -50% -50%;
+      border-radius: 12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(85,56,28,0.12) 0 2px, transparent 2px 34px),
+        linear-gradient(180deg, rgba(255,255,255,0.34), transparent 50%),
+        linear-gradient(90deg, #e8c89d, #bc8455);
+      transform: translate3d(72px, 78px, 8px);
+    }
+
+    .wall-line {
+      width: 2px;
+      height: 250px;
+      translate: -50% -50%;
+      background: linear-gradient(180deg, transparent, rgba(62,54,43,0.26), transparent);
+      transform: translate3d(var(--x), var(--y), var(--z)) rotateX(-90deg) rotateY(var(--r));
+    }
+
+    .soft-shadow {
+      width: 360px;
+      height: 210px;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(45, 33, 20, 0.28), transparent 68%);
+      filter: blur(8px);
+      transform: translate3d(40px, 92px, 2px);
+    }
+
+    .reference-image {
+      display: none;
+      position: fixed;
+      right: clamp(34px, 6vw, 92px);
+      bottom: clamp(24px, 5vh, 54px);
+      z-index: 4;
+      width: clamp(110px, 11vw, 166px);
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 22px 52px rgba(38, 32, 24, 0.3);
+      opacity: calc(0.42 + var(--progress, 0) * 0.44);
+      padding: 4px;
+      background:
+        linear-gradient(180deg, rgba(211, 231, 230, 0.8) 0 28%, transparent 28%),
+        linear-gradient(180deg, transparent 0 30%, rgba(255, 244, 231, 0.92) 30% 60%, transparent 60%),
+        linear-gradient(90deg, transparent 0 15%, rgba(25, 32, 30, 0.38) 15% 33%, transparent 33% 39%, rgba(197, 133, 78, 0.7) 39% 64%, transparent 64% 70%, rgba(25, 32, 30, 0.34) 70% 88%, transparent 88%),
+        linear-gradient(180deg, transparent 0 52%, #f8f2e8 52% 58%, transparent 58%),
+        linear-gradient(180deg, transparent 0 67%, rgba(52, 128, 143, 0.72) 67% 74%, transparent 74%),
+        linear-gradient(145deg, #efe6da, #b8aa98);
+      overflow: hidden;
+    }
+
+    .reference-image::before,
+    .reference-image::after {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      height: 7%;
+      background: #fbf6ed;
+      box-shadow: 0 2px 6px rgba(42, 34, 24, 0.2);
+    }
+
+    .reference-image::before { top: 32%; }
+    .reference-image::after { top: 51%; }
+
+    .site-header {
+      position: fixed;
+      left: clamp(46px, 12vw, 180px);
+      right: clamp(46px, 10.8vw, 164px);
+      top: clamp(50px, 12vh, 148px);
+      z-index: 8;
+      display: grid;
+      grid-template-columns: 180px 1fr 210px;
+      align-items: center;
+      gap: 28px;
+      pointer-events: auto;
+    }
+
+    .brand {
+      display: grid;
+      justify-items: center;
+      gap: 6px;
+      color: #d6a968;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: end;
+      gap: 4px;
+      height: 58px;
+    }
+
+    .brand-mark span {
+      display: block;
+      width: 10px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(180deg, #e3c37c, #8f6333);
+      box-shadow: 0 0 18px rgba(205, 156, 85, 0.22);
+    }
+
+    .brand-mark span:nth-child(1) { height: 42px; }
+    .brand-mark span:nth-child(2) { height: 54px; }
+    .brand-mark span:nth-child(3) { height: 62px; }
+    .brand-mark span:nth-child(4) { height: 48px; }
+
+    .brand-title {
+      position: relative;
+      font-size: 22px;
+      line-height: 0.95;
+    }
+
+    .brand-title::before,
+    .brand-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 58px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #d6a968);
+    }
+
+    .brand-title::before {
+      right: calc(100% + 10px);
+    }
+
+    .brand-title::after {
+      left: calc(100% + 10px);
+      transform: scaleX(-1);
+    }
+
+    .brand-subtitle {
+      font-size: 7px;
+      letter-spacing: 0.24em;
+      color: rgba(214, 169, 104, 0.74);
+    }
+
+    .nav-links {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      gap: clamp(24px, 3vw, 52px);
+      color: rgba(248, 244, 238, 0.64);
+      font-size: 16px;
+    }
+
+    .nav-links a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav-links a:first-child {
+      color: #fff;
+    }
+
+    .contact-pill,
+    .explore-btn {
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff5e9;
+      background: linear-gradient(100deg, rgba(58, 42, 48, 0.95), rgba(139, 93, 57, 0.95));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 18px 36px rgba(0,0,0,0.28);
+      text-decoration: none;
+    }
+
+    .contact-pill {
+      justify-self: end;
+      min-width: 210px;
+      padding: 18px 34px;
+      border-radius: 999px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .explore-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 30px;
+      padding: 20px 34px;
+      min-width: 274px;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 18px;
+    }
+
+    .search-card {
+      position: fixed;
+      left: clamp(48px, 12vw, 180px);
+      bottom: clamp(48px, 13vh, 132px);
+      z-index: 8;
+      width: min(696px, 48vw);
+      pointer-events: auto;
+      color: #f8f4ee;
+    }
+
+    .search-tabs {
+      display: flex;
+      width: 208px;
+      height: 64px;
+    }
+
+    .search-tabs button {
+      flex: 1;
+      border: 0;
+      color: rgba(248,244,238,0.72);
+      background: rgba(34, 20, 10, 0.86);
+      font: inherit;
+      font-size: 17px;
+    }
+
+    .search-tabs button:first-child {
+      color: #fff;
+      font-weight: 800;
+      background: rgba(72, 42, 18, 0.92);
+    }
+
+    .search-body {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr 78px;
+      align-items: center;
+      gap: 28px;
+      min-height: 100px;
+      padding: 24px;
+      background: linear-gradient(90deg, rgba(54, 29, 10, 0.96), rgba(78, 43, 16, 0.94));
+      box-shadow: 0 22px 44px rgba(0,0,0,0.32);
+    }
+
+    .search-divider {
+      height: 54px;
+      background: rgba(255,255,255,0.22);
+    }
+
+    .search-label {
+      margin: 0 0 8px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .search-value {
+      margin: 0;
+      color: rgba(248,244,238,0.68);
+      font-size: 16px;
+    }
+
+    .search-button {
+      width: 58px;
+      height: 58px;
+      border: 0;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: #7e5130;
+      font-size: 26px;
+    }
+
+    .copy {
+      position: relative;
+      z-index: 3;
+      min-height: 520vh;
+      pointer-events: none;
+    }
+
+    .hero,
+    .chapter {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 9vh clamp(22px, 5vw, 72px);
+    }
+
+    .hero {
+      align-items: flex-start;
+      padding-top: clamp(260px, 31vh, 330px);
+      padding-left: clamp(48px, 12vw, 180px);
+    }
+
+    .panel {
+      max-width: 650px;
+      pointer-events: auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      color: var(--ink);
+      line-height: 1.12;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    h1 {
+      max-width: 720px;
+      font-size: clamp(44px, 4.4vw, 72px);
+      font-weight: 700;
+    }
+
+    h2 {
+      font-size: clamp(38px, 6vw, 78px);
+      font-weight: 800;
+    }
+
+    p {
+      max-width: 390px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(15px, 1.2vw, 17px);
+      line-height: 1.6;
+    }
+
+    .chapter:nth-child(even) {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .chapter:nth-child(even) p {
+      margin-left: auto;
+    }
+
+    .rail {
+      position: fixed;
+      right: clamp(46px, 7.2vw, 108px);
+      top: 50%;
+      z-index: 5;
+      display: grid;
+      gap: 12px;
+      translate: 0 -50%;
+    }
+
+    .dot {
+      width: 9px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      cursor: pointer;
+      transition: height 180ms ease, background 180ms ease;
+    }
+
+    .dot.active {
+      height: 64px;
+      background: #fff;
+    }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 6;
+      height: 4px;
+      width: calc(var(--progress, 0) * 100%);
+      background: linear-gradient(90deg, #27231e, var(--accent));
+    }
+
+    .hint {
+      position: fixed;
+      left: clamp(46px, 7.4vw, 112px);
+      bottom: clamp(34px, 8vh, 82px);
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(248,244,238,0.62);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .wheel {
+      width: 22px;
+      height: 36px;
+      border: 2px solid currentColor;
+      border-radius: 999px;
+      position: relative;
+    }
+
+    .wheel::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 7px;
+      width: 4px;
+      height: 8px;
+      translate: -50% 0;
+      border-radius: 999px;
+      background: currentColor;
+      animation: wheel 1400ms ease-in-out infinite;
+    }
+
+    @keyframes wheel {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(10px); opacity: 1; }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --camera-scale: 0.48;
+      }
+
+      .camera {
+        width: 100vw;
+        height: 62vh;
+        margin-top: 24vh;
+      }
+
+      .villa-canvas {
+        right: -18vw;
+        top: 42vh;
+        width: 132vw;
+        height: 50vh;
+      }
+
+      .stage {
+        inset: 14px;
+        border-radius: 18px;
+      }
+
+      .site-header {
+        left: 28px;
+        right: 28px;
+        top: 34px;
+        grid-template-columns: 1fr auto;
+      }
+
+      .brand {
+        justify-items: start;
+        transform: scale(0.72);
+        transform-origin: left top;
+      }
+
+      .nav-links,
+      .contact-pill,
+      .search-card {
+        display: none;
+      }
+
+      .hero,
+      .chapter {
+        align-items: flex-start;
+        padding: 150px 28px 0;
+      }
+
+      .chapter:nth-child(even) {
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .chapter:nth-child(even) p {
+        margin-left: 0;
+      }
+
+      .panel {
+        max-width: 340px;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .rail {
+        right: 12px;
+      }
+
+      .hint {
+        display: none;
+      }
+
+      .reference-image {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="brand" aria-label="Property">
+      <div class="brand-mark" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="brand-title">PROPERTY</div>
+      <div class="brand-subtitle">YOUR TAGLINE HERE</div>
+    </div>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#home">Home</a>
+      <a href="#buyers">Buyers</a>
+      <a href="#properties">Properties</a>
+      <a href="#news">News</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="contact-pill" href="#contact">Contact</a>
+  </header>
+
+  <div class="stage" aria-hidden="true">
+    <canvas class="villa-canvas" id="villaCanvas"></canvas>
+    <div class="camera" id="camera">
+      <div class="world">
+        <div class="ground"></div>
+        <div class="driveway"></div>
+        <div class="pool"></div>
+        <div class="tree one"></div>
+        <div class="tree two"></div>
+        <div class="tree three"></div>
+
+        <div class="house">
+          <div class="piece slab"></div>
+
+          <div class="piece box main-volume">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece box wing-left">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece box side-core">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece box garage">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece box upper">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece box balcony-slab">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+          <div class="piece slab-underside" style="--w: 574px; --d: 254px; --x: 20px; --y: 28px; --z: 166px;"></div>
+
+          <div class="piece box top-parapet">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece box terrace-roof">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+          <div class="piece slab-underside" style="--w: 504px; --d: 276px; --x: 84px; --y: -78px; --z: 348px;"></div>
+          <div class="piece upper-return"></div>
+          <div class="piece lower-return"></div>
+
+          <div class="piece box roof">
+            <div class="face top"></div>
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="piece glass-wall"></div>
+          <div class="piece side-glass"></div>
+          <div class="piece warm-room"></div>
+          <div class="piece glass-box glass-lower"></div>
+          <div class="piece glass-box glass-upper"></div>
+          <div class="piece glass-box glass-side"></div>
+          <div class="piece lower-glass"></div>
+          <div class="piece upper-glass"></div>
+          <div class="piece wood-screen"></div>
+          <div class="piece balcony-rail"></div>
+          <div class="column" style="--x: -184px; --y: 166px;"></div>
+          <div class="column" style="--x: 6px; --y: 168px;"></div>
+          <div class="column" style="--x: 202px; --y: 160px;"></div>
+          <div class="sofa" style="--x: -52px; --y: 210px;"></div>
+          <div class="sofa" style="--x: 78px; --y: 210px;"></div>
+          <div class="table" style="--x: 14px; --y: 218px;"></div>
+          <div class="planter" style="--x: -142px; --y: 196px;"></div>
+          <div class="piece garage-door"></div>
+          <div class="piece door"></div>
+          <div class="piece deck"></div>
+          <div class="path-light" style="--x: -210px; --y: 222px;"></div>
+          <div class="path-light" style="--x: -120px; --y: 214px;"></div>
+          <div class="path-light" style="--x: 18px; --y: 232px;"></div>
+          <div class="path-light" style="--x: 152px; --y: 218px;"></div>
+
+          <div class="piece pergola">
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="beam"></div>
+            <div class="post a"></div>
+            <div class="post b"></div>
+            <div class="post c"></div>
+            <div class="post d"></div>
+          </div>
+
+          <div class="piece hotspot" style="--x: 92px; --y: 116px; --z: 150px;" data-label="Cream hallway"></div>
+          <div class="piece hotspot" style="--x: -204px; --y: 118px; --z: 104px;" data-label="Graphite entry"></div>
+          <div class="piece hotspot" style="--x: 126px; --y: 174px; --z: 178px;" data-label="Wood niche"></div>
+
+          <div class="piece entry-set">
+            <div class="piece soft-shadow"></div>
+            <div class="piece floor-runner"></div>
+            <div class="piece portal-back"></div>
+            <div class="piece hall-wall hall-left"></div>
+            <div class="piece hall-wall hall-right"></div>
+            <div class="piece hall-ceiling"></div>
+            <div class="piece wall-line" style="--x: 118px; --y: -42px; --z: 166px; --r: 88deg;"></div>
+            <div class="piece wall-line" style="--x: 196px; --y: 42px; --z: 166px; --r: -88deg;"></div>
+            <div class="piece jamb"></div>
+            <div class="piece entry-door"></div>
+            <div class="piece door-edge"></div>
+            <div class="piece threshold"></div>
+            <div class="piece niche"></div>
+            <div class="piece host"></div>
+            <div class="downlight" style="--x: 8px; --y: -30px;"></div>
+            <div class="downlight" style="--x: 104px; --y: 48px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reference-image" aria-label="Actual modern villa reference miniature"></div>
+
+  <aside class="search-card" aria-label="Property search">
+    <div class="search-tabs">
+      <button type="button">Buy</button>
+      <button type="button">Rent</button>
+    </div>
+    <div class="search-body">
+      <div>
+        <p class="search-label">Location</p>
+        <p class="search-value">Paseo del Mar, Malaga, Spain</p>
+      </div>
+      <div class="search-divider" aria-hidden="true"></div>
+      <div>
+        <p class="search-label">Pricing</p>
+        <p class="search-value">$15000 - $65000</p>
+      </div>
+      <button class="search-button" type="button" aria-label="Search">вЊ•</button>
+    </div>
+  </aside>
+
+  <nav class="rail" aria-label="Scroll chapters">
+    <button class="dot active" type="button" data-target="0" aria-label="Hero"></button>
+    <button class="dot" type="button" data-target="1" aria-label="Front facade"></button>
+    <button class="dot" type="button" data-target="2" aria-label="Orbit begins"></button>
+    <button class="dot" type="button" data-target="3" aria-label="Back side"></button>
+    <button class="dot" type="button" data-target="4" aria-label="Full 360"></button>
+  </nav>
+
+  <div class="hint"><span class="wheel"></span> Scroll model</div>
+
+  <main class="copy">
+    <section class="hero" data-shot="0">
+      <div class="panel">
+        <p class="eyebrow">Real Estate</p>
+        <h1>Discover Your Future: Find The Perfect Property</h1>
+        <p>Explore a scroll-controlled architectural showcase with warm glass, cantilevered roof slabs, gardens, poolside lighting, and a full 360 property view.</p>
+        <a class="explore-btn" href="#properties">Explore Now <span aria-hidden="true">в†’</span></a>
+      </div>
+    </section>
+
+    <section class="chapter" data-shot="1">
+      <div class="panel">
+        <p class="eyebrow">Front facade</p>
+        <h2>Start exactly from the front.</h2>
+        <p>The first scroll beat holds the same front-facing read as the reference photo: white bands, warm glass, pool edge, and driveway.</p>
+      </div>
+    </section>
+
+    <section class="chapter" data-shot="2">
+      <div class="panel">
+        <p class="eyebrow">Orbit begins</p>
+        <h2>Then the camera swings around.</h2>
+        <p>The house starts a smooth 360 turn, showing that the slabs, columns, glass, pool, and driveway have real depth.</p>
+      </div>
+    </section>
+
+    <section class="chapter" data-shot="3">
+      <div class="panel">
+        <p class="eyebrow">Back side</p>
+        <h2>Side and rear massing.</h2>
+        <p>The orbit passes the side and back so the model reads like an actual architectural object, not a flat elevation.</p>
+      </div>
+    </section>
+
+    <section class="chapter" data-shot="4">
+      <div class="panel">
+        <p class="eyebrow">Full 360</p>
+        <h2>Return to the hero angle.</h2>
+        <p>The final beat completes the orbit and lands back near the front, ready to loop visually as you scroll.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("villaCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function hexToRgb(hex) {
+      const clean = hex.replace("#", "");
+      return {
+        r: parseInt(clean.slice(0, 2), 16),
+        g: parseInt(clean.slice(2, 4), 16),
+        b: parseInt(clean.slice(4, 6), 16)
+      };
+    }
+
+    function shade(hex, amount) {
+      const { r, g, b } = hexToRgb(hex);
+      const mix = amount >= 0 ? 255 : 0;
+      const factor = Math.abs(amount);
+      const nr = Math.round(r + (mix - r) * factor);
+      const ng = Math.round(g + (mix - g) * factor);
+      const nb = Math.round(b + (mix - b) * factor);
+      return `rgb(${nr}, ${ng}, ${nb})`;
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function easeInOut(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function cameraAt(progress) {
+      const mobile = innerWidth < 760;
+      const frames = [
+        { p: 0, yaw: 0, pitch: mobile ? 1.08 : 1.18, zoom: mobile ? 0.72 : 0.88, cx: mobile ? 0.5 : 0.64, cy: mobile ? 0.62 : 0.62 },
+        { p: 0.18, yaw: 0, pitch: mobile ? 1.05 : 1.14, zoom: mobile ? 0.8 : 1.02, cx: mobile ? 0.5 : 0.64, cy: mobile ? 0.61 : 0.61 },
+        { p: 0.32, yaw: -24, pitch: mobile ? 0.82 : 0.82, zoom: mobile ? 0.78 : 0.96, cx: mobile ? 0.5 : 0.66, cy: mobile ? 0.59 : 0.58 },
+        { p: 0.48, yaw: -92, pitch: mobile ? 1.02 : 1.0, zoom: mobile ? 0.72 : 0.84, cx: mobile ? 0.5 : 0.7, cy: mobile ? 0.63 : 0.63 },
+        { p: 0.64, yaw: -182, pitch: mobile ? 1.04 : 1.03, zoom: mobile ? 0.69 : 0.8, cx: mobile ? 0.5 : 0.69, cy: mobile ? 0.64 : 0.64 },
+        { p: 0.82, yaw: -272, pitch: mobile ? 1.02 : 1.0, zoom: mobile ? 0.68 : 0.8, cx: mobile ? 0.5 : 0.68, cy: mobile ? 0.63 : 0.63 },
+        { p: 1, yaw: -360, pitch: mobile ? 1.08 : 1.14, zoom: mobile ? 0.7 : 0.88, cx: mobile ? 0.5 : 0.64, cy: mobile ? 0.61 : 0.6 }
+      ];
+
+      let a = frames[0];
+      let b = frames[frames.length - 1];
+      for (let i = 0; i < frames.length - 1; i += 1) {
+        if (progress >= frames[i].p && progress <= frames[i + 1].p) {
+          a = frames[i];
+          b = frames[i + 1];
+          break;
+        }
+      }
+      const local = easeInOut((progress - a.p) / Math.max(0.001, b.p - a.p));
+      return {
+        yaw: mix(a.yaw, b.yaw, local),
+        pitch: mix(a.pitch, b.pitch, local),
+        zoom: mix(a.zoom, b.zoom, local),
+        cx: mix(a.cx, b.cx, local),
+        cy: mix(a.cy, b.cy, local)
+      };
+    }
+
+    function makeProjector(progress, time = 0) {
+      const rect = canvas.getBoundingClientRect();
+      const mobile = innerWidth < 760;
+      const camera = cameraAt(progress);
+      const idle = Math.sin(time * 0.0014) * (mobile ? 0.008 : 0.012);
+      const yaw = (camera.yaw + idle * 22) * Math.PI / 180;
+      const pitch = camera.pitch + idle * 0.22;
+      const zoom = camera.zoom + Math.sin(progress * Math.PI) * (mobile ? 0.025 : 0.04);
+      const cx = rect.width * camera.cx;
+      const cy = rect.height * camera.cy + Math.sin(time * 0.0018) * (mobile ? 4 : 7);
+      const scale = Math.min(rect.width / 760, rect.height / 520) * 520 * zoom;
+
+      return function project(point) {
+        const [x, y, z] = point;
+        const rx = x * Math.cos(yaw) - y * Math.sin(yaw);
+        const ry = x * Math.sin(yaw) + y * Math.cos(yaw);
+        const sy = ry * Math.cos(pitch) - z * Math.sin(pitch);
+        return {
+          x: cx + rx * scale,
+          y: cy + sy * scale
+        };
+      };
+    }
+
+    function poly(points, fill, stroke = "rgba(45,38,28,0.12)", lineWidth = 1) {
+      ctx.beginPath();
+      points.forEach((p, index) => {
+        if (index === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      }
+    }
+
+    function cuboid(project, box, colors) {
+      const { x, y, z, w, d, h } = box;
+      const p = {
+        nbl: project([x, y, z]),
+        nbr: project([x + w, y, z]),
+        ntr: project([x + w, y + d, z]),
+        ntl: project([x, y + d, z]),
+        tbl: project([x, y, z + h]),
+        tbr: project([x + w, y, z + h]),
+        ttr: project([x + w, y + d, z + h]),
+        ttl: project([x, y + d, z + h])
+      };
+
+      poly([p.ntl, p.ntr, p.ttr, p.ttl], colors.back || shade(colors.base, -0.1));
+      poly([p.nbr, p.ntr, p.ttr, p.tbr], colors.side || shade(colors.base, -0.2));
+      poly([p.nbl, p.nbr, p.tbr, p.tbl], colors.front || colors.base);
+      poly([p.tbl, p.tbr, p.ttr, p.ttl], colors.top || shade(colors.base, 0.18));
+    }
+
+    function panel(project, x, y, z, w, h, color, divisions = 4, shimmer = 0) {
+      const a = project([x, y, z]);
+      const b = project([x + w, y, z]);
+      const c = project([x + w, y, z + h]);
+      const d = project([x, y, z + h]);
+      poly([a, b, c, d], color, "rgba(24,22,20,0.32)", 1.4);
+      for (let i = 1; i < divisions; i += 1) {
+        const xx = x + (w / divisions) * i;
+        const p1 = project([xx, y, z]);
+        const p2 = project([xx, y, z + h]);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = "rgba(35,31,27,0.48)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      const glintStart = 0.08 + shimmer * 0.34;
+      const glintA = project([x + w * glintStart, y, z + h * 0.86]);
+      const glintB = project([x + w * Math.min(0.9, glintStart + 0.45), y, z + h * 0.65]);
+      ctx.beginPath();
+      ctx.moveTo(glintA.x, glintA.y);
+      ctx.lineTo(glintB.x, glintB.y);
+      ctx.strokeStyle = `rgba(255,255,255,${0.42 + shimmer * 0.34})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function sidePanel(project, x, y, z, d, h, color, divisions = 3, shimmer = 0) {
+      const a = project([x, y, z]);
+      const b = project([x, y + d, z]);
+      const c = project([x, y + d, z + h]);
+      const e = project([x, y, z + h]);
+      poly([a, b, c, e], color, "rgba(24,22,20,0.28)", 1.3);
+      for (let i = 1; i < divisions; i += 1) {
+        const yy = y + (d / divisions) * i;
+        const p1 = project([x, yy, z]);
+        const p2 = project([x, yy, z + h]);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = "rgba(35,31,27,0.42)";
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+      }
+      const glintA = project([x, y + d * (0.14 + shimmer * 0.28), z + h * 0.82]);
+      const glintB = project([x, y + d * Math.min(0.92, 0.58 + shimmer * 0.2), z + h * 0.58]);
+      ctx.beginPath();
+      ctx.moveTo(glintA.x, glintA.y);
+      ctx.lineTo(glintB.x, glintB.y);
+      ctx.strokeStyle = `rgba(255,255,255,${0.34 + shimmer * 0.24})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function ellipseAt(project, x, y, z, rx, ry, fill) {
+      const p = project([x, y, z]);
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(-0.16);
+      ctx.scale(rx, ry);
+      ctx.beginPath();
+      ctx.arc(0, 0, 1, 0, Math.PI * 2);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function photoFrame(project) {
+      const white = {
+        base: "#f2ebe2",
+        front: "#fff8ef",
+        side: "#cfc2b4",
+        top: "#fffdf7"
+      };
+      cuboid(project, { x: -0.58, y: -0.12, z: 0.02, w: 0.075, d: 0.075, h: 0.48 }, white);
+      cuboid(project, { x: 0.43, y: -0.12, z: 0.02, w: 0.075, d: 0.075, h: 0.48 }, white);
+      cuboid(project, { x: -0.58, y: -0.13, z: 0.02, w: 1.085, d: 0.08, h: 0.06 }, white);
+      cuboid(project, { x: -0.58, y: -0.13, z: 0.245, w: 1.085, d: 0.08, h: 0.065 }, white);
+      cuboid(project, { x: -0.49, y: -0.132, z: 0.5, w: 1.08, d: 0.09, h: 0.075 }, white);
+      cuboid(project, { x: -0.16, y: -0.138, z: 0.06, w: 0.04, d: 0.07, h: 0.42 }, white);
+      cuboid(project, { x: 0.18, y: -0.138, z: 0.06, w: 0.04, d: 0.07, h: 0.42 }, white);
+
+      cuboid(project, { x: 0.34, y: -0.15, z: 0.075, w: 0.16, d: 0.07, h: 0.29 }, {
+        base: "#b8997f",
+        front: "#c7a98f",
+        side: "#7f624b",
+        top: "#d1b69f"
+      });
+    }
+
+    function drawLightRay(project, progress, time) {
+      const sweep = (Math.sin(time * 0.0009 + progress * 5.2) + 1) / 2;
+      const a = project([-0.46 + sweep * 0.7, -0.19, 0.56]);
+      const b = project([-0.16 + sweep * 0.7, -0.19, 0.03]);
+      const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      gradient.addColorStop(0, "rgba(255,255,255,0)");
+      gradient.addColorStop(0.5, "rgba(255,255,255,0.34)");
+      gradient.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 28;
+      ctx.stroke();
+    }
+
+    function drawFrontEntry(project, shimmer) {
+      cuboid(project, { x: 0.205, y: -0.025, z: 0.022, w: 0.22, d: 0.11, h: 0.022 }, {
+        base: "#c9bcaa",
+        front: "#ddd2c2",
+        side: "#978b7d",
+        top: "#eee4d5"
+      });
+      cuboid(project, { x: 0.285, y: -0.058, z: 0.042, w: 0.09, d: 0.034, h: 0.15 }, {
+        base: "#2f2822",
+        front: "#473a31",
+        side: "#211b17",
+        top: "#5b4a3e"
+      });
+      cuboid(project, { x: 0.38, y: -0.06, z: 0.048, w: 0.035, d: 0.03, h: 0.14 }, {
+        base: "#c58a54",
+        front: "#e5ad71",
+        side: "#8b5c38",
+        top: "#f0c08a"
+      });
+      cuboid(project, { x: 0.265, y: -0.074, z: 0.195, w: 0.18, d: 0.038, h: 0.022 }, {
+        base: "#f4eee5",
+        front: "#fff8ef",
+        side: "#c7baaa",
+        top: "#fffdf6"
+      });
+      cuboid(project, { x: 0.25, y: 0.03, z: 0.018, w: 0.2, d: 0.19, h: 0.012 }, {
+        base: "#c9bcaa",
+        front: "#ddd2c2",
+        side: "#978b7d",
+        top: "#eee4d5"
+      });
+
+      const p = project([0.398, -0.06, 0.126]);
+      const glow = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, 20 + shimmer * 10);
+      glow.addColorStop(0, "rgba(255, 191, 100, 0.7)");
+      glow.addColorStop(0.45, "rgba(255, 169, 76, 0.22)");
+      glow.addColorStop(1, "rgba(255, 169, 76, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 24, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawRearAndRoof(project) {
+      const wall = {
+        base: "#e7ded2",
+        front: "#f3eadf",
+        side: "#c3b7aa",
+        top: "#fbf5ec"
+      };
+      const roof = {
+        base: "#f6efe6",
+        front: "#fff9f0",
+        side: "#c9bdaf",
+        top: "#fffdf6"
+      };
+
+      cuboid(project, { x: -0.52, y: 0.13, z: 0.02, w: 1.02, d: 0.11, h: 0.24 }, wall);
+      cuboid(project, { x: -0.38, y: 0.12, z: 0.3, w: 0.82, d: 0.12, h: 0.2 }, wall);
+      cuboid(project, { x: -0.56, y: -0.09, z: 0.02, w: 0.1, d: 0.37, h: 0.26 }, wall);
+      cuboid(project, { x: 0.42, y: -0.09, z: 0.02, w: 0.1, d: 0.37, h: 0.26 }, wall);
+      cuboid(project, { x: -0.4, y: -0.12, z: 0.28, w: 0.1, d: 0.39, h: 0.24 }, wall);
+      cuboid(project, { x: 0.36, y: -0.12, z: 0.28, w: 0.1, d: 0.39, h: 0.24 }, wall);
+
+      cuboid(project, { x: -0.64, y: -0.18, z: 0.225, w: 1.22, d: 0.47, h: 0.07 }, roof);
+      cuboid(project, { x: -0.58, y: -0.2, z: 0.265, w: 0.06, d: 0.5, h: 0.035 }, {
+        base: "#f0e7dc",
+        front: "#fff7ed",
+        side: "#bcae9e",
+        top: "#fffdf6"
+      });
+      cuboid(project, { x: 0.52, y: -0.2, z: 0.265, w: 0.06, d: 0.5, h: 0.035 }, {
+        base: "#f0e7dc",
+        front: "#fff7ed",
+        side: "#bcae9e",
+        top: "#fffdf6"
+      });
+      cuboid(project, { x: -0.54, y: -0.2, z: 0.548, w: 1.14, d: 0.5, h: 0.075 }, roof);
+      cuboid(project, { x: -0.48, y: -0.22, z: 0.61, w: 0.98, d: 0.44, h: 0.045 }, {
+        base: "#f1e9df",
+        front: "#fff8ef",
+        side: "#bfb2a3",
+        top: "#fffdf6"
+      });
+
+      sidePanel(project, -0.565, -0.04, 0.07, 0.18, 0.14, "rgba(93, 129, 137, 0.48)", 2, 0.35);
+      sidePanel(project, 0.515, -0.03, 0.075, 0.22, 0.15, "rgba(91, 126, 134, 0.46)", 3, 0.6);
+      sidePanel(project, -0.405, -0.06, 0.335, 0.2, 0.13, "rgba(104, 143, 151, 0.44)", 2, 0.2);
+      sidePanel(project, 0.465, -0.05, 0.34, 0.2, 0.12, "rgba(97, 136, 145, 0.46)", 2, 0.48);
+
+      panel(project, -0.45, 0.246, 0.07, 0.28, 0.13, "rgba(91, 126, 134, 0.44)", 3, 0.28);
+      panel(project, 0.03, 0.246, 0.075, 0.34, 0.13, "rgba(96, 135, 145, 0.46)", 3, 0.52);
+      panel(project, -0.24, 0.246, 0.345, 0.38, 0.12, "rgba(102, 141, 150, 0.42)", 4, 0.4);
+
+      cuboid(project, { x: -0.49, y: 0.2, z: 0.06, w: 0.34, d: 0.025, h: 0.12 }, {
+        base: "#7d8581",
+        front: "#9aa19c",
+        side: "#5d635f",
+        top: "#b4bbb6"
+      });
+      cuboid(project, { x: 0.06, y: 0.2, z: 0.34, w: 0.25, d: 0.025, h: 0.1 }, {
+        base: "#b8895f",
+        front: "#d0a47c",
+        side: "#805d42",
+        top: "#dfba94"
+      });
+      cuboid(project, { x: -0.56, y: 0.22, z: 0.02, w: 0.24, d: 0.18, h: 0.018 }, {
+        base: "#c7bba9",
+        front: "#ddd3c4",
+        side: "#958979",
+        top: "#eee5d8"
+      });
+      cuboid(project, { x: 0.2, y: 0.22, z: 0.02, w: 0.26, d: 0.18, h: 0.018 }, {
+        base: "#c7bba9",
+        front: "#ddd3c4",
+        side: "#958979",
+        top: "#eee5d8"
+      });
+      cuboid(project, { x: -0.52, y: 0.235, z: 0.08, w: 0.16, d: 0.025, h: 0.08 }, {
+        base: "#7d8581",
+        front: "#9aa19c",
+        side: "#5d635f",
+        top: "#b4bbb6"
+      });
+      cuboid(project, { x: 0.22, y: 0.235, z: 0.09, w: 0.18, d: 0.025, h: 0.08 }, {
+        base: "#7d8581",
+        front: "#9aa19c",
+        side: "#5d635f",
+        top: "#b4bbb6"
+      });
+    }
+
+    function drawVilla(progress = 0, time = 0) {
+      resizeCanvas();
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      const project = makeProjector(progress, time);
+      const shimmer = (Math.sin(time * 0.0014 + progress * 8) + 1) / 2;
+
+      const glow = ctx.createRadialGradient(rect.width * 0.56, rect.height * 0.52, 40, rect.width * 0.56, rect.height * 0.52, rect.width * 0.42);
+      glow.addColorStop(0, `rgba(255,255,255,${0.86 + shimmer * 0.08})`);
+      glow.addColorStop(0.58, "rgba(255,255,255,0.38)");
+      glow.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      cuboid(project, { x: -0.56, y: -0.38, z: -0.035, w: 1.18, d: 0.84, h: 0.04 }, {
+        base: "#cfc4b1",
+        top: "#dcd3c2",
+        side: "#a99b88"
+      });
+
+      cuboid(project, { x: -0.55, y: 0.15, z: 0, w: 0.36, d: 0.16, h: 0.018 }, {
+        base: "#4f8f9c",
+        top: "#65a8b6",
+        side: "#2f6670"
+      });
+      cuboid(project, { x: 0.02, y: 0.23, z: 0, w: 0.58, d: 0.22, h: 0.016 }, {
+        base: "#bdb5a7",
+        top: "#d9d2c7",
+        side: "#918777"
+      });
+
+      [[-0.56, -0.18], [-0.46, 0.38], [-0.2, 0.42], [0.56, -0.2], [0.55, 0.28]].forEach(([x, y]) => {
+        ellipseAt(project, x, y, 0.03, 24, 11, "rgba(54,79,42,0.9)");
+      });
+
+      drawRearAndRoof(project);
+
+      cuboid(project, { x: -0.48, y: -0.06, z: 0.02, w: 0.96, d: 0.24, h: 0.2 }, {
+        base: "#eee7dd",
+        front: "#f7f1e8",
+        side: "#cfc3b4",
+        top: "#fff9ef"
+      });
+      cuboid(project, { x: -0.56, y: -0.09, z: 0.22, w: 1.08, d: 0.32, h: 0.07 }, {
+        base: "#f5efe5",
+        front: "#fbf7ef",
+        side: "#cbbfb1",
+        top: "#fffaf2"
+      });
+      cuboid(project, { x: -0.34, y: -0.1, z: 0.29, w: 0.74, d: 0.28, h: 0.18 }, {
+        base: "#efe6dc",
+        front: "#f9f2e8",
+        side: "#cdbfac",
+        top: "#fff8ee"
+      });
+      cuboid(project, { x: -0.46, y: -0.14, z: 0.49, w: 0.98, d: 0.36, h: 0.08 }, {
+        base: "#f4eee4",
+        front: "#fff8ee",
+        side: "#c7baaa",
+        top: "#fffdf6"
+      });
+
+      photoFrame(project);
+
+      cuboid(project, { x: 0.36, y: -0.06, z: 0.02, w: 0.12, d: 0.24, h: 0.26 }, {
+        base: "#bda68d",
+        front: "#cdb49a",
+        side: "#90775e",
+        top: "#d9c6b0"
+      });
+      cuboid(project, { x: -0.5, y: -0.03, z: 0.02, w: 0.12, d: 0.2, h: 0.22 }, {
+        base: "#f6efe5",
+        front: "#fff8ef",
+        side: "#c9bdae",
+        top: "#fffaf3"
+      });
+
+      const glass = "rgba(83, 92, 89, 0.46)";
+      const warmGlass = "rgba(214, 145, 76, 0.42)";
+      panel(project, -0.48, -0.155, 0.085, 0.92, 0.14, glass, 6, shimmer);
+      panel(project, -0.44, -0.162, 0.325, 0.82, 0.13, glass, 5, 1 - shimmer);
+      panel(project, -0.08, -0.17, 0.085, 0.3, 0.14, warmGlass, 2, shimmer);
+      panel(project, -0.06, -0.176, 0.325, 0.28, 0.125, warmGlass, 2, 1 - shimmer);
+      drawLightRay(project, progress, time);
+
+      cuboid(project, { x: 0.28, y: -0.088, z: 0.06, w: 0.12, d: 0.025, h: 0.16 }, {
+        base: "#b48b68",
+        front: "#c8a07c",
+        side: "#856247",
+        top: "#d4b08f"
+      });
+
+      [[-0.35, -0.08], [-0.05, -0.08], [0.28, -0.08]].forEach(([x, y]) => {
+        cuboid(project, { x, y, z: 0.02, w: 0.025, d: 0.035, h: 0.27 }, {
+          base: "#f5eee4",
+          side: "#c4b8aa",
+          top: "#fffaf3"
+        });
+      });
+      drawFrontEntry(project, shimmer);
+
+      cuboid(project, { x: -0.03, y: 0.18, z: 0.04, w: 0.15, d: 0.08, h: 0.035 }, {
+        base: "#bca78d",
+        side: "#8e735b",
+        top: "#d9c7b2"
+      });
+      cuboid(project, { x: 0.14, y: 0.18, z: 0.04, w: 0.1, d: 0.06, h: 0.03 }, {
+        base: "#8b5f3f",
+        side: "#5e3e2a",
+        top: "#a97851"
+      });
+      cuboid(project, { x: -0.18, y: 0.18, z: 0.04, w: 0.12, d: 0.055, h: 0.03 }, {
+        base: "#d6c4ad",
+        side: "#9a8067",
+        top: "#eadcc9"
+      });
+
+      for (const [x, y] of [[-0.42, 0.27], [-0.25, 0.3], [0.02, 0.32], [0.28, 0.29], [0.5, 0.22]]) {
+        const p = project([x, y, 0.025]);
+        const pulse = (Math.sin(time * 0.004 + x * 7 + y * 11) + 1) / 2;
+        const r = 6 + pulse * 3;
+        const grd = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, r);
+        grd.addColorStop(0, "rgba(255,241,177,0.95)");
+        grd.addColorStop(0.45, "rgba(221,137,54,0.65)");
+        grd.addColorStop(1, "rgba(221,137,54,0)");
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    const shots = [
+      { x: -34, y: -48, z: 0, scale: 0.68, panX: 64, panY: 56 },
+      { x: -22, y: -32, z: -1, scale: 0.84, panX: 104, panY: 36 },
+      { x: -10, y: -72, z: 1, scale: 1.08, panX: -10, panY: 48 },
+      { x: -21, y: -126, z: 0, scale: 0.96, panX: -58, panY: 20 },
+      { x: -58, y: -48, z: 0, scale: 0.74, panX: 36, panY: -24 }
+    ];
+
+    const root = document.documentElement;
+    const dots = [...document.querySelectorAll(".dot")];
+    const sections = [...document.querySelectorAll("[data-shot]")];
+    const previewParam = new URLSearchParams(location.search).get("preview");
+    const previewProgress = previewParam === null ? null : Math.min(1, Math.max(0, Number(previewParam)));
+    let targetProgress = 0;
+    let renderedProgress = 0;
+    let rafStarted = false;
+
+    function mix(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function smooth(t) {
+      return t * t * (3 - 2 * t);
+    }
+
+    function setShot(value) {
+      const max = shots.length - 1;
+      const scaled = value * max;
+      const index = Math.min(max - 1, Math.floor(scaled));
+      const local = smooth(scaled - index);
+      const a = shots[index];
+      const b = shots[Math.min(max, index + 1)];
+      const current = {
+        x: mix(a.x, b.x, local),
+        y: mix(a.y, b.y, local),
+        z: mix(a.z, b.z, local),
+        scale: mix(a.scale, b.scale, local),
+        panX: mix(a.panX, b.panX, local),
+        panY: mix(a.panY, b.panY, local)
+      };
+
+      if (innerWidth < 760) {
+        current.scale *= 0.62;
+        current.panX -= 150;
+        current.panY += 126;
+      }
+
+      root.style.setProperty("--camera-x", current.x + "deg");
+      root.style.setProperty("--camera-y", current.y + "deg");
+      root.style.setProperty("--camera-z", current.z + "deg");
+      root.style.setProperty("--camera-scale", current.scale);
+      root.style.setProperty("--camera-pan-x", current.panX + "px");
+      root.style.setProperty("--camera-pan-y", current.panY + "px");
+    }
+
+    function measureProgress() {
+      if (previewProgress !== null && !Number.isNaN(previewProgress)) {
+        targetProgress = previewProgress;
+        return;
+      }
+      const height = document.body.scrollHeight - innerHeight;
+      targetProgress = height > 0 ? Math.min(1, Math.max(0, scrollY / height)) : 0;
+    }
+
+    function render(time = 0) {
+      renderedProgress += (targetProgress - renderedProgress) * 0.085;
+      if (Math.abs(targetProgress - renderedProgress) < 0.0005) {
+        renderedProgress = targetProgress;
+      }
+
+      root.style.setProperty("--progress", renderedProgress.toFixed(4));
+      setShot(renderedProgress);
+
+      const active = Math.min(shots.length - 1, Math.round(renderedProgress * (shots.length - 1)));
+      dots.forEach((dot, index) => dot.classList.toggle("active", index === active));
+      drawVilla(renderedProgress, time);
+      requestAnimationFrame(render);
+    }
+
+    function update() {
+      measureProgress();
+      if (!rafStarted) {
+        rafStarted = true;
+        renderedProgress = targetProgress;
+        requestAnimationFrame(render);
+      }
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const target = sections[Number(dot.dataset.target)];
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    addEventListener("scroll", measureProgress, { passive: true });
+    addEventListener("resize", () => {
+      resizeCanvas();
+      measureProgress();
+    });
+    update();
+  </script>
+</body>
+</html>
