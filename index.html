@@ -1127,7 +1127,7 @@
       position: fixed;
       left: clamp(70px, 9.8vw, 150px);
       right: clamp(78px, 10.85vw, 166px);
-      top: clamp(42px, 6vh, 70px);
+      top: clamp(102px, 13vh, 150px);
       z-index: 8;
       display: grid;
       grid-template-columns: 174px 1fr 210px;
@@ -1337,9 +1337,20 @@
         rgba(72, 42, 18, 0.92);
     }
 
+    .search-button svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     .search-body {
       display: grid;
-      grid-template-columns: 1fr 1px 1fr 92px;
+      grid-template-columns: 1fr 1px 1fr 78px;
       align-items: center;
       gap: 29px;
       min-height: 103px;
@@ -1374,7 +1385,7 @@
 
     .search-button {
       position: relative;
-      width: 76px;
+      width: 58px;
       height: 58px;
       border: 0;
       display: grid;
@@ -1388,11 +1399,7 @@
         inset 0 1px 0 rgba(255,255,255,0.16),
         inset 0 -8px 16px rgba(37, 18, 5, 0.18),
         0 10px 18px rgba(0,0,0,0.2);
-      font: inherit;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 0;
     }
 
     .search-button::before {
@@ -1401,6 +1408,13 @@
 
     .search-button::after {
       content: none;
+    }
+
+    .search-button svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 1.9;
+      filter: drop-shadow(0 0 8px rgba(255, 226, 171, 0.22));
     }
 
     .copy {
@@ -1835,7 +1849,9 @@
           <p class="search-value">$15000 - $65000</p>
         </div>
       </div>
-      <button class="search-button" type="button" aria-label="Search">Search</button>
+      <button class="search-button" type="button" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.75" cy="10.75" r="6.25"></circle><path d="m16 16 4 4"></path></svg>
+      </button>
     </div>
   </aside>
 
